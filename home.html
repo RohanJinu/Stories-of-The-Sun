@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stories of the Sun</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.cdnfonts.com/css/devil-breeze" rel="stylesheet">
+
+    <style>
+        /* --- Base & Cosmic Background Styles --- */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0c0a18;
+            color: #e0e0e0;
+            overflow-x: hidden;
+        }
+        .font-orbitron { font-family: 'Orbitron', sans-serif; }
+        *::-webkit-scrollbar { width: 0; }
+        * { padding: 0; margin: 0; list-style: none; box-sizing: border-box; }
+
+        @keyframes move-background { from { transform: translate3d(0px, 0px, 0px); } to { transform: translate3d(1000px, 0px, 0px); } }
+        @keyframes twinkle { 0%, 100% { opacity: 0.6; } 50% { opacity: 1; } }
+        #parallax-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; overflow: hidden; }
+        .stars { position: absolute; top: 0; left: 0; right: 0; bottom: 0; width: 100%; height: 100%; display: block; background-repeat: repeat; }
+        #stars1 { background-image: radial-gradient(1px 1px at 20px 30px, #eee, rgba(0,0,0,0)), radial-gradient(1px 1px at 40px 70px, #fff, rgba(0,0,0,0)), radial-gradient(1px 1px at 50px 160px, #ddd, rgba(0,0,0,0)), radial-gradient(1px 1px at 90px 40px, #fff, rgba(0,0,0,0)), radial-gradient(2px 2px at 130px 80px, #fff, rgba(0,0,0,0)), radial-gradient(2px 2px at 160px 120px, #ddd, rgba(0,0,0,0)); background-size: 200px 200px; animation: move-background 150s linear infinite; }
+        #stars2 { background-image: radial-gradient(1px 1px at 10px 90px, #eee, rgba(0,0,0,0)), radial-gradient(2px 2px at 80px 30px, #fff, rgba(0,0,0,0)), radial-gradient(2px 2px at 100px 110px, #ddd, rgba(0,0,0,0)), radial-gradient(2px 2px at 170px 180px, #fff, rgba(0,0,0,0)); background-size: 250px 250px; animation: move-background 100s linear infinite, twinkle 5s ease-in-out infinite; }
+        #stars3 { background-image: radial-gradient(3px 3px at 50px 50px, #fff, rgba(0,0,0,0)), radial-gradient(3px 3px at 120px 150px, #fff, rgba(0,0,0,0)), radial-gradient(2px 2px at 200px 80px, #ddd, rgba(0,0,0,0)); background-size: 300px 300px; animation: move-background 75s linear infinite; }
+        
+        @keyframes title-glow {
+            0%, 100% { text-shadow: 0 0 10px #fff, 0 0 20px #6c3a9e, 0 0 30px #6c3a9e; }
+            50% { text-shadow: 0 0 20px #fff, 0 0 30px #a78bfa, 0 0 40px #a78bfa; }
+        }
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-20px); }
+            60% { transform: translateY(-10px); }
+        }
+
+        /* --- Scrolling Section Styles --- */
+        .section {
+            width: 100%;
+            min-height: 100vh;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+        }
+        .content-fit {
+            width: min(1200px, 90vw);
+            margin: auto;
+            min-height: 100vh;
+            position: relative;
+            padding-block: 5em;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        #banner { text-align: center; }
+        #banner .title {
+            font-size: clamp(3em, 12vw, 8em);
+            font-weight: 700;
+            position: relative;
+            letter-spacing: 10px;
+            font-family: 'Devil Breeze', sans-serif;
+            animation: title-glow 4s ease-in-out infinite;
+        }
+        #banner .scroll-prompt {
+            animation: bounce 2s infinite;
+        }
+
+        .char-section .era {
+            font-family: 'Orbitron', sans-serif;
+            text-transform: uppercase;
+            color: #a78bfa;
+            letter-spacing: 2px;
+            margin-bottom: 1rem;
+        }
+        .char-section .title {
+            font-size: clamp(2.5em, 6vw, 4em);
+            font-weight: 500;
+            font-family: 'Orbitron', sans-serif;
+        }
+        .char-section p {
+            font-weight: 200;
+            margin-top: 1rem;
+            line-height: 1.8;
+        }
+        .char-section img {
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
+        }
+        .char-section img:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(167, 139, 250, 0.6), 0 0 60px rgba(167, 139, 250, 0.4);
+        }
+       
+        /* --- Scroll Animation --- */
+        .scroll-reveal {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+        .scroll-reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* --- Screen Transition & Glow Effects --- */
+        .screen { transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out; }
+        .screen.hidden { opacity: 0; transform: scale(0.95); pointer-events: none; position: absolute; top:0; left:0; }
+        .glow-on-hover { transition: all 0.3s ease-in-out; box-shadow: 0 0 5px rgba(173, 216, 230, 0.2), 0 0 10px rgba(173, 216, 230, 0.2); }
+        .glow-on-hover:hover { 
+            transform: translateY(-5px) scale(1.03) perspective(1000px) rotateY(2deg); 
+            box-shadow: 0 0 15px rgba(173, 216, 230, 0.6), 0 0 30px rgba(173, 216, 230, 0.4); 
+        }
+
+        /* --- Story Player Book Styles --- */
+        #book-container {
+             perspective: 2500px;
+        }
+        .page {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            width: 50%;
+            height: 100%;
+            transform-origin: left center;
+            transition: transform 0.9s cubic-bezier(0.645, 0.045, 0.355, 1);
+            transform-style: preserve-3d;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        .page.flipped {
+            transform: rotateY(-180deg);
+        }
+        .page-face {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            padding: 2.5rem 2rem;
+            color: #e0e0e0;
+            background: linear-gradient(to right, #211d38, #2a2542);
+            overflow-y: auto;
+            border-radius: 0 1rem 1rem 0;
+            box-shadow: inset -5px 0 15px rgba(0,0,0,0.4);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            scrollbar-width: none;
+        }
+        .page-face::-webkit-scrollbar { display: none; }
+        .page-face.page-back {
+            transform: rotateY(180deg);
+            border-radius: 1rem 0 0 1rem;
+            box-shadow: inset 5px 0 15px rgba(0,0,0,0.4);
+        }
+    </style>
+</head>
+<body class="text-white antialiased">
+    <div id="parallax-bg">
+        <div id="stars1" class="stars"></div>
+        <div id="stars2" class="stars"></div>
+        <div id="stars3" class="stars"></div>
+    </div>
+
+    <div id="app-container" class="relative">
+
+        <main id="scrolling-intro" class="screen">
+            <div class="section" id="banner">
+                <div class="content-fit">
+                    <div class="title">Stories of the Sun</div>
+                    <p class="mt-8 text-lg max-w-3xl mx-auto text-gray-300 leading-relaxed font-serif">
+                        Before you stands a shimmering portal, glowing with the light of a million suns. Step closer, and you will find a magical table where time folds upon itself — a wide-eyed caveman wonders at the fiery Sun, a present-day teen seeks to understand the forces above, and a daring astronaut from the future has witnessed the Sun’s power firsthand. Together, they will guide you through the mysteries of space weather — from dazzling auroras to the invisible storms that ripple across the skies, affecting our modern world. Through their stories, you will discover how the Sun’s moods have shaped life, technology, and human curiosity across the ages.
+                    </p>
+                    <p class="mt-8 text-xl text-blue-200 scroll-prompt">Scroll down to begin your journey.</p>
+                </div>
+            </div>
+
+            <div class="section char-section" id="koba">
+                <div class="content-fit flex flex-col md:flex-row items-center justify-center gap-12 scroll-reveal">
+                    <div class="des w-full md:w-1/2">
+                        <div class="era">Past</div>
+                        <div class="title">Koba the Caveman</div>
+                        <p>Ooooh… sky fire! I am Koba, watcher of the sky long, long ago. If you want to see the Sun as magic and wonder, to feel the dance of lights like the first humans did… come to me. I show you the world through eyes of wonder and curiosity.</p>
+                        <button data-character="caveman" class="select-narrator-btn mt-8 bg-purple-600/80 hover:bg-purple-500 text-white font-bold py-3 px-8 rounded-lg transition-all glow-on-hover">Select this Narrator</button>
+                    </div>
+                    <div class="w-full md:w-1/2 flex justify-center p-4">
+                         <img src="Gemini_Generated_Image_ijcawlijcawlijca.jpg" alt="Koba the Caveman" class="rounded-lg shadow-2xl shadow-purple-900/50 max-h-[500px] w-auto">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="section char-section" id="ina">
+                <div class="content-fit flex flex-col md:flex-row-reverse items-center justify-center gap-12 scroll-reveal">
+                    <div class="des w-full md:w-1/2 md:text-right flex flex-col items-center md:items-end">
+                        <div class="era">Present Day</div>
+                        <div class="title">Ina the Teenager</div>
+                        <p>Hi, I’m Ina. I study the Sun and space weather every day, taking notes, tracking storms, and sharing what I learn. If you want to understand how solar flares, auroras, and charged particles affect satellites, phones, and power lines — I can explain it clearly, step by step.</p>
+                        <button data-character="teen" class="select-narrator-btn mt-8 bg-purple-600/80 hover:bg-purple-500 text-white font-bold py-3 px-8 rounded-lg transition-all glow-on-hover">Select this Narrator</button>
+                    </div>
+                    <div class="w-full md:w-1/2 flex justify-center p-4">
+                         <img src="Teenager.jpg" alt="Ina the Teenager" class="rounded-lg shadow-2xl shadow-purple-900/50 max-h-[500px] w-auto">
+                     </div>
+                </div>
+            </div>
+
+            <div class="section char-section" id="aria">
+                 <div class="content-fit flex flex-col md:flex-row items-center justify-center gap-12 scroll-reveal">
+                    <div class="des w-full md:w-1/2">
+                        <div class="era">Future</div>
+                        <div class="title">Aria the Astronaut</div>
+                        <p>I am Aria, orbiting above Earth where the Sun’s power touches all. If you wish to see the Sun as it truly is, to understand its storms, auroras, and energy from the front lines of space… follow me. I will take you to the edge of human knowledge, where science meets adventure.</p>
+                        <button data-character="astronaut" class="select-narrator-btn mt-8 bg-purple-600/80 hover:bg-purple-500 text-white font-bold py-3 px-8 rounded-lg transition-all glow-on-hover">Select this Narrator</button>
+                    </div>
+                    <div class="w-full md:w-1/2 flex justify-center p-4">
+                        <img src="astronaut.jpg" alt="Aria the Astronaut" class="rounded-lg shadow-2xl shadow-purple-900/50 max-h-[500px] w-auto">
+                    </div>
+                </div>
+            </div>
+        </main>
+        
+        <section id="topic-selection" class="screen hidden w-full min-h-screen flex items-center justify-center p-4">
+             <div class="w-full max-w-5xl mx-auto relative">
+                <button id="back-to-characters-main" class="absolute -top-16 left-0 bg-gray-700/50 hover:bg-gray-600/70 p-2 rounded-full transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>
+                </button>
+                <div class="text-center mb-12">
+                    <h2 id="topic-selection-title" class="font-orbitron text-4xl md:text-5xl font-bold uppercase" style="text-shadow: 0 0 15px #a855f7;">Select a Story</h2>
+                </div>
+                <div id="topic-grid-secondary" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"></div>
+             </div>
+        </section>
+
+        <section id="story-player" class="screen hidden w-full min-h-screen flex items-center justify-center p-4">
+            <div class="relative w-full max-w-5xl mx-auto">
+                <button id="back-to-topics" class="absolute top-0 left-0 -translate-y-12 bg-gray-700/50 hover:bg-gray-600/70 p-2 rounded-full transition-colors z-30">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>
+                </button>
+                <div class="w-full flex flex-col items-center">
+                    <div id="book-container" class="w-full max-w-4xl h-[60vh] md:h-[70vh] relative">
+                         <!-- Static page on the far left, representing the inside of the book cover -->
+                        <div class="absolute top-0 left-0 w-1/2 h-full bg-gray-900/50 rounded-l-2xl shadow-lg"></div>
+                         <!-- Flipping pages will be generated by JS here -->
+                    </div>
+                    <div class="mt-8 flex justify-center items-center gap-8 w-full">
+                        <button id="prev-scene-btn" class="bg-purple-600/80 hover:bg-purple-500 disabled:bg-gray-600 disabled:cursor-not-allowed text-white font-bold py-3 px-8 rounded-lg transition-all glow-on-hover">Back</button>
+                        <div id="scene-counter" class="text-lg text-gray-400 font-semibold w-32 text-center"></div>
+                        <button id="next-scene-btn" class="bg-purple-600/80 hover:bg-purple-500 disabled:bg-gray-600 disabled:cursor-not-allowed text-white font-bold py-3 px-8 rounded-lg transition-all glow-on-hover">Next</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <script type="module">
+        // --- APPLICATION LOGIC ---
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            // --- DATA STRUCTURE FOR ALL STORIES ---
+            const storyData = {
+                auroras: {
+                          title: "Auroras",
+                          icon: `<svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto mb-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>`,
+                          characters: {
+                            caveman: { name: "Caveman", era: "Prehistoric", emoji: "🪨", story: { title: "Koba and the Sky Fire", scenes: [ { text: "“My name is Koba. I like to watch the night sky while my tribe sleeps. One night, the dark sky began to glow!”" }, { text: "“I gasped and pointed. ‘Ooooh! Sky fire! Dancing fire!’ Strange colors moved like magic ribbons in the sky.”" }, { text: "“I jumped and waved my arms to copy the lights. My tribe clapped and laughed. It felt like the sky was dancing with me.”" }, { text: "“I did not know it then, but the Sun was sending tiny sparks to Earth. When they touched the air near the cold poles, the colors came alive.”" }, { text: "“Now people call them Auroras — the Northern and Southern Lights. But to me, they will always be… the Sky Fire.”" } ] } },
+                            teen: { name: "Present-day Teen", era: "Now", emoji: "🧢", story: { title: "Ina’s Science Surprise", scenes: [ { text: "“Hi, I’m Ina. Yesterday, I was walking home listening to music… when suddenly my GPS stopped working. My map froze!”" }, { text: "“I looked up, and the whole sky was glowing green and pink. It was like the universe was making neon art just for me.”" }, { text: "“I remembered what my science club teacher said: ‘This is space weather! The Sun sends out charged particles that reach Earth.’”" }, { text: "“When those particles hit Earth’s air near the poles, they make the sky shine in amazing colors. That’s what I was seeing — an aurora!”" }, { text: "“So, yeah, my GPS glitched for a bit… but I got the best science TikTok ever. Auroras are the Sun’s way of saying hello!”" } ] } },
+                            astronaut: { name: "Astronaut Aria", era: "Future", emoji: "👩‍🚀", story: { title: "Aria’s Aurora Adventure", scenes: [ { text: "“Hi, I’m Aria, and I live in a space station orbiting Earth. One quiet night, I was checking my instruments when a sudden flash of green and red lit up the planet below.”" }, { text: "“My heart jumped! The lights twisted and danced like glowing ribbons. I quickly grabbed my space diary to sketch the incredible colors. It felt like the Earth itself was putting on a magical show just for me.”" }, { text: "“Then I saw the readings on my screen — the Sun had sent a burst of charged particles toward Earth. I knew I had to check the station shields. It was a solar storm! Powerful… but beautiful.”" }, { text: "“These particles collided with Earth’s air near the poles, creating the glowing Northern and Southern Lights. From up here, the auroras look like glowing rivers circling the planet. It’s the same science that sometimes affects satellites and power lines — but from here, I just feel amazed.”" }, { text: "“As the lights faded, I closed my diary and smiled. Space weather is powerful, yes… but it also makes the most magical shows. And lucky me — I get the best seat in the house.”" } ] } }
+                          }
+                        },
+                solarFlares: {
+                    title: "Solar Flares", icon: `<svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto mb-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>`,
+                    characters: {
+                        caveman: { name: "Koba the Caveman", era: "Prehistoric", emoji: "🪨", story: { title: "Koba and the Sun’s Angry Flash", scenes: [ { text: "“My name Koba. Me watch big fire ball in the sky. It warm. It bright. It life.”" }, { text: "“One day… BOOM! The Sun make a quick angry flash. Like fire rock crashing, but in the sky!”" }, { text: "“I no hear sound. But far away, strange things happen. Birds fly funny. Tribe say magic broke the air!”" }, { text: "“Later, people know. Sun throw tiny sparks — solar flares. Earth shield blocks most. But still… the sparks play tricks with sky signals.”" }, { text: "“To me, Sun’s flash was angry fire sneeze. To you, it is science. But Koba always remember… The day the Sun shouted.”" } ] } },
+                        teen: { name: "Ina the Teenager", era: "Present Day", emoji: "🧢", story: { title: "Ina and the Solar Flare", scenes: [ { text: "“My name is Ina. I love music, science club, and watching the Sun with my telescope app. One day, I saw a giant flash on the Sun’s surface!”" }, { text: "“It was a Solar Flare — a sudden, super-bright burst of energy. It looked like the Sun sneezed lightning into space!”" }, { text: "“Solar flares can reach Earth in minutes. They can make radios crackle, planes change routes, and even scramble GPS on my phone!”" }, { text: "“Here’s the science: Solar flares release energy and charged particles. Earth’s magnetic field shields us, but some signals still get mixed up.”" }, { text: "“To me, solar flares are like the Sun’s surprise fireworks. They remind us that even from 93 million miles away, the Sun can still say hello.”" } ] } },
+                        astronaut: { name: "Aria the Astronaut", era: "Future", emoji: "👩‍🚀", story: { title: "Aria and the Solar Flare", scenes: [ { text: "“My name is Aria. I’m an astronaut on the space station. Every day, I study the Sun. It looks calm and bright from Earth… but up close, I know the Sun is a stormy star.”" }, { text: "“One morning, I saw a huge Solar Flare. A solar flare is a sudden explosion of light and energy caused by twisted magnetic fields on the Sun. It’s like the Sun snapping a rubber band — but with the power of millions of volcanoes at once!”" }, { text: "“The flare released radiation — X-rays and high-energy particles. They travel at the speed of light and reached Earth in just 8 minutes. Down below, they can jam radio signals, confuse airplane pilots, and interrupt GPS satellites.”" }, { text: "“Earth has protection — the magnetosphere. This invisible shield bends most of the Sun’s particles away. But near the North and South Poles, some particles slip through, lighting up the sky as auroras.”" }, { text: "“From space, I see both the danger and the beauty. Solar flares remind me that the Sun is powerful, and Earth’s shield is precious. That’s why scientists — and astronauts like me — watch space weather every day.”" } ] } },
+                    }
+                },
+                cme: {
+                    title: "Coronal Mass Ejections", icon: `<svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto mb-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 12c0-3.9-3.1-7-7-7"/><path d="M12 12c0-3.9 3.1-7 7-7"/><path d="M12 12c-3.9 0-7 3.1-7 7"/><path d="M12 12c3.9 0 7 3.1 7 7"/><circle cx="12" cy="12" r="1"/></svg>`,
+                    characters: {
+                        caveman: { name: "Koba the Caveman", era: "Prehistoric", emoji: "🪨", story: { title: "Koba and the Sun’s Big Breath", scenes: [ { text: "“My name Koba. Me sit by river. Big fire ball in sky look normal. But then… Sun take deep breath.”" }, { text: "“WHOOSH! Sun blow huge breath of glowing air. Not just light, but heavy fire wind. It race toward Earth.”" }, { text: "“Strange things happen. Birds fly in circles. Torches burn funny. Even stones in cave shake. Tribe say, ‘Sky angry again!’”" }, { text: "“Later people call it Coronal Mass Ejection. Sun spit giant fire cloud. Earth shield fight hard, but sky still dance with wild colors.”" }, { text: "“To me, it was not science. It was the Sun breathing on Earth. And when the sky danced, Koba knew the Sun was alive.”" } ] } },
+                        teen: { name: "Ina the Teenager", era: "Present Day", emoji: "🧢", story: { title: "Ina and the Sun’s Giant Storm Cloud", scenes: [ { text: "“I’m Ina. I love science club and TikTok. Today my phone buzzed: ‘Warning: Solar Storm Approaching Earth.’”" }, { text: "“This wasn’t a solar flare — it was a Coronal Mass Ejection (CME). That’s when the Sun blasts out a huge cloud of hot plasma — charged particles wrapped in magnetic fields.”" }, { text: "“When a CME reaches Earth, it shakes up Earth’s magnetic field. That can cause a geomagnetic storm. It may knock out satellites, scramble GPS, or even shut down power grids.”" }, { text: "“But CMEs also make some of the most colorful auroras. Nature’s way of turning a storm… into art.”" } ] } },
+                        astronaut: { name: "Aria the Astronaut", era: "Future", emoji: "👩‍🚀", story: { title: "Aria and the Coronal Mass Ejection", scenes: [ { text: "“I’m Aria, an astronaut. One day, I saw the Sun erupt with a CME. A CME is like the Sun spitting out a giant cloud of plasma — billions of tons of hot, charged gas.”" }, { text: "“This storm cloud travels millions of miles per hour. It carries its own magnetic field, and when it collides with Earth’s magnetosphere… things get stormy.”" }, { text: "“Geomagnetic storms from CMEs can damage satellites, interfere with spacecraft, and even endanger astronauts like me. That’s why we move into protected areas on the station.”" }, { text: "“But there’s beauty too. When the particles slip into Earth’s atmosphere, they paint green, red, and purple auroras. From space, I see them like glowing crowns on Earth.”" }, { text: "“CMEs remind me the Sun is not just a gentle star… It is powerful, alive, and always connected to Earth.”" } ] } },
+                    }
+                },
+                sunspots: {
+                    title: "Sunspots & Cycles", icon: `<svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto mb-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3.5" fill="currentColor"/></svg>`,
+                    characters: {
+                        caveman: { name: "Koba the Caveman", era: "Prehistoric", emoji: "🪨", story: { title: "Koba and the Dancing Sun", scenes: [ { text: "“I am Koba. I watch big fire in sky — Sun. Sometimes Sun has dark spots. Strange! Why it have spots? Why it change?”" }, { text: "“Dark spots are cool places on Sun. Fire not same everywhere! Spots twist and turn — make big boom sometimes! Boom send fire and wind into sky. Sky dance. Big light show.”" }, { text: "“Sun has long cycle. Long, long time — 11 moons many times. When many spots, Sun angry, sky loud. When few spots, Sun sleepy, sky calm. Sun breathe. Sun pulse. Coba watch.”" }, { text: "“Even small dark spots make big magic. Sky light up — red, green, purple. Shiny lights dance, like fire spirits! Coba learn: dark spots on Sun make Sun’s moods. Sun talk, Coba listen.”" } ] } },
+                        teen: { name: "Ina the Teenager", era: "Present Day", emoji: "🧢", story: { title: "Ina and the Sun’s Secret Spots", scenes: [ { text: "“I’m Ina. I love science club and TikTok. Today I noticed something strange on my tablet: ‘Sunspots spotted on the Sun!’”" }, { text: "“Sunspots are darker, cooler areas on the Sun’s surface. They happen when magnetic fields get twisted and strong. They may look calm, but they’re often where solar flares and CMEs start!”" }, { text: "“The Sun has an 11-year cycle. At the solar maximum, there are many sunspots and flares. At the minimum, the Sun is quieter. It’s like the Sun’s heartbeat, pulsing through time.”" }, { text: "“Sunspots may seem small, but they can cause huge space weather. Flares and CMEs often start there, making auroras dance and satellites flicker. Understanding sunspots helps us predict the Sun’s moods — and stay safe on Earth!”" } ] } },
+                        astronaut: { name: "Aria the Astronaut", era: "Future", emoji: "👩‍🚀", story: { title: "Aria and the Sun’s Spots", scenes: [ { text: "“My name is Aria. From space, I can study the Sun every day. Sometimes I see dark patches on its surface. They look like freckles… but they’re called Sunspots.”" }, { text: "“Sunspots aren’t dirt. They’re places where the Sun’s magnetic field is extra strong. That traps energy and makes the spots cooler and darker than the rest of the Sun.”" }, { text: "“The number of sunspots changes over time. Sometimes there are many, sometimes only a few. This pattern is called the Solar Cycle, and it lasts about 11 years.”" }, { text: "“When the Sun has lots of spots, we call it Solar Maximum. That’s when solar flares and CMEs happen most. When it has very few spots, it’s Solar Minimum — a quieter time for space weather.”" }, { text: "“The Sun’s cycle is like its heartbeat. It tells us when storms are likely. That’s why astronauts, pilots, and power workers all keep an eye on the Sun’s spots.”" }, { text: "“To me, sunspots are the Sun’s freckles — tiny marks that reveal its moods. And just like Earth’s seasons, the Sun has a rhythm all its own.”" } ] } },
+                    }
+                }
+            };
+            
+            const characterDetails = {
+                caveman: { name: "Koba the Caveman", era: "Past", image: "Gemini_Generated_Image_ijcawlijcawlijca.jpg" },
+                teen: { name: "Ina the Teenager", era: "Present Day", image: "Teenager.jpg" },
+                astronaut: { name: "Aria the Astronaut", era: "Future", image: "astronaut.jpg" }
+            };
+
+            // --- DOM ELEMENTS ---
+            const screens = {
+                scrollingIntro: document.getElementById('scrolling-intro'),
+                topicSelection: document.getElementById('topic-selection'),
+                storyPlayer: document.getElementById('story-player')
+            };
+            const topicGridSecondary = document.getElementById('topic-grid-secondary');
+            const topicSelectionTitle = document.getElementById('topic-selection-title');
+            const bookContainer = document.getElementById('book-container');
+            const prevBtn = document.getElementById('prev-scene-btn');
+            const nextBtn = document.getElementById('next-scene-btn');
+            const sceneCounter = document.getElementById('scene-counter');
+
+            // --- STATE MANAGEMENT ---
+            let currentState = {
+                activeScreen: 'scrollingIntro',
+                selectedCharacter: null,
+                selectedTopic: null,
+                currentStory: null,
+                currentSceneIndex: 0
+            };
+
+            // --- FUNCTIONS ---
+            function switchScreen(screenName) {
+                currentState.activeScreen = screenName;
+                window.scrollTo(0, 0);
+                Object.keys(screens).forEach(key => {
+                    screens[key].classList.toggle('hidden', key !== screenName);
+                });
+            }
+
+            function selectCharacter(charKey) {
+                currentState.selectedCharacter = charKey;
+                renderTopicMenu();
+            }
+
+            function renderTopicMenu() {
+                const character = characterDetails[currentState.selectedCharacter];
+                topicSelectionTitle.textContent = `Stories for ${character.name}`;
+                topicGridSecondary.innerHTML = '';
+                Object.entries(storyData).forEach(([topicKey, topic]) => {
+                    if (topic.characters[currentState.selectedCharacter]) {
+                        const tile = document.createElement('div');
+                        tile.className = 'glow-on-hover bg-gray-800/50 backdrop-blur-sm p-6 rounded-xl text-center cursor-pointer flex flex-col justify-center items-center h-48';
+                        tile.dataset.topic = topicKey;
+                        tile.innerHTML = `${topic.icon}<h3 class="font-orbitron text-xl font-bold">${topic.title}</h3>`;
+                        tile.addEventListener('click', () => selectTopic(topicKey));
+                        topicGridSecondary.appendChild(tile);
+                    }
+                });
+                switchScreen('topicSelection');
+            }
+            
+            function selectTopic(topicKey) {
+                currentState.selectedTopic = topicKey;
+                startStory();
+            }
+
+            function startStory() {
+                const story = storyData[currentState.selectedTopic].characters[currentState.selectedCharacter].story;
+                currentState.currentStory = story;
+                currentState.currentSceneIndex = 0;
+                
+                bookContainer.innerHTML = `<div class="absolute top-0 left-0 w-1/2 h-full bg-gray-900/50 rounded-l-2xl shadow-lg"></div>`; // Reset and add back static left side
+                
+                const scenes = story.scenes || [{text: "Story coming soon..."}];
+                
+                // Create text pages (single-sided)
+                scenes.forEach((scene, index) => {
+                    const page = document.createElement('div');
+                    page.className = 'page';
+                    page.style.zIndex = scenes.length - index;
+                    
+                    const front = document.createElement('div');
+                    front.className = 'page-face page-front';
+                    front.innerHTML = `<p class="text-lg leading-relaxed">${scene.text}</p>`;
+                    page.appendChild(front);
+                    
+                    bookContainer.appendChild(page);
+                });
+                
+                // Create the special double-sided cover page
+                const coverPage = document.createElement('div');
+                coverPage.className = 'page';
+                coverPage.style.zIndex = scenes.length + 1;
+
+                const coverFront = document.createElement('div');
+                coverFront.className = 'page-face page-front font-orbitron text-3xl p-4';
+                coverFront.innerHTML = `<h3>${story.title}</h3>`;
+
+                const coverBack = document.createElement('div');
+                coverBack.className = 'page-face page-back';
+                coverBack.style.padding = '0'; // Remove padding for image
+                const characterImageSrc = characterDetails[currentState.selectedCharacter].image;
+                coverBack.innerHTML = `<img src="${characterImageSrc}" alt="${characterDetails[currentState.selectedCharacter].name}" class="w-full h-full object-cover rounded-l-2xl">`;
+                
+                coverPage.appendChild(coverFront);
+                coverPage.appendChild(coverBack);
+                bookContainer.appendChild(coverPage);
+                
+                updatePageFlip();
+                switchScreen('storyPlayer');
+            }
+
+            function updatePageFlip() {
+                const pages = bookContainer.querySelectorAll('.page');
+                const totalScenes = (currentState.currentStory.scenes || []).length;
+                
+                pages.forEach((page, index) => {
+                    // Pages are added to DOM with cover last, so its index is pages.length - 1
+                    // Z-index is highest for cover, then decreasing for text pages
+                    // A page is "flipped" if its story scene number is less than the current index.
+                    // The cover corresponds to scene index 0.
+                    const pageZIndex = parseInt(page.style.zIndex, 10);
+                    const sceneNumber = totalScenes + 1 - pageZIndex;
+
+                    page.classList.toggle('flipped', sceneNumber < currentState.currentSceneIndex);
+                });
+                
+                prevBtn.disabled = currentState.currentSceneIndex === 0;
+                nextBtn.disabled = currentState.currentSceneIndex > totalScenes;
+                
+                if (currentState.currentSceneIndex === 0) {
+                    sceneCounter.textContent = 'Cover';
+                } else if (currentState.currentSceneIndex > totalScenes) {
+                    sceneCounter.textContent = 'The End';
+                    nextBtn.disabled = true;
+                } else {
+                    sceneCounter.textContent = `Page ${currentState.currentSceneIndex} of ${totalScenes}`;
+                }
+            }
+
+            // --- EVENT LISTENERS ---
+            document.querySelectorAll('.select-narrator-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => selectCharacter(e.currentTarget.dataset.character));
+            });
+            document.getElementById('back-to-characters-main').addEventListener('click', () => switchScreen('scrollingIntro'));
+            document.getElementById('back-to-topics').addEventListener('click', renderTopicMenu);
+            
+            nextBtn.addEventListener('click', () => {
+                const totalScenes = (currentState.currentStory.scenes || []).length;
+                if (currentState.currentSceneIndex <= totalScenes) {
+                    currentState.currentSceneIndex++;
+                    updatePageFlip();
+                }
+            });
+
+            prevBtn.addEventListener('click', () => {
+                if (currentState.currentSceneIndex > 0) {
+                    currentState.currentSceneIndex--;
+                    updatePageFlip();
+                }
+            });
+
+            // --- SCROLL ANIMATION ---
+            const scrollElements = document.querySelectorAll('.scroll-reveal');
+            const elementObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            scrollElements.forEach(el => {
+                elementObserver.observe(el);
+            });
+
+            // --- INITIALIZE APP ---
+            switchScreen('scrollingIntro');
+        });
+    </script>
+</body>
+</html>
+
